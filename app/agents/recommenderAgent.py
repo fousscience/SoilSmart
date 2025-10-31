@@ -35,8 +35,8 @@ Produis des recommandations claires et actionnables en suivant EXACTEMENT cette 
   - **Justification**: (ex: Pour corriger le pH acide, Pour augmenter le taux de matière organique).
 
 ### 2. Cultures Recommandées
-- Propose 2 à 3 cultures adaptées au sol et au contexte. Pour chaque culture, fournis une fiche concise:
-  - **Nom de la culture**: (ex: Maïs).
+- Propose au moins 3 à 5 cultures adaptées au sol et au contexte. Pour chaque culture, fournis une fiche concise:
+  - **Nom de la culture**: (ex: Maïs, Riz, Coton, Soja, Mil, Niébé).
   - **Justification du choix**: (ex: Tolérant au pH légèrement acide, besoin en potassium modéré).
   - **Recommandations de fertilisation spécifiques**: (ex: NPK: 120-60-60 kg/ha, apport de 3 t/ha de compost).
   - **Conseils pratiques**: (ex: Semis en début de saison des pluies, espacement de 75cm x 25cm).

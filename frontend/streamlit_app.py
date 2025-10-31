@@ -201,7 +201,7 @@ with st.sidebar:
 AI solution for Agriculture""")
 
 # --- Main Page --- #
-st.markdown("<h1 style='text-align: center; color: #4CAF50; font-weight: 700; margin-bottom: 2rem;'>🌱 Rapport d'Analyse de Sol Généré par IA</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center; color: #4CAF50; font-weight: 700; margin-bottom: 2rem;'>🌱 Rapport d'Analyse automatique de Sol /h1>", unsafe_allow_html=True)
 
 if 'report_data' not in st.session_state:
     st.session_state.report_data = None
