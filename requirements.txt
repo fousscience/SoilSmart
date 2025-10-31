@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+streamlit
+chromadb
+openai
+python-dotenv
+pydantic
+pytesseract
+pdf2image
+Pillow
+PyMuPDF
+langchain
+requests
+python-multipart

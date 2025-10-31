@@ -1,0 +1,73 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# ---- Virtual Environments ----
+.env
+.venv/
+venv/
+env/
+ENV/
+*.env
+
+# ---- IDE / Editors ----
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ---- Logs ----
+*.log
+logs/
+nohup.out
+
+# ---- OS ----
+.DS_Store
+Thumbs.db
+
+# ---- Streamlit ----
+.streamlit/
+frontend/__pycache__/
+
+# ---- FastAPI ----
+app/__pycache__/
+app/*.pyc
+
+# ---- ChromaDB vector store ----
+data/chroma_db/
+chroma_storage/
+*.chroma/
+
+# ---- OCR outputs ----
+temp/
+uploads/
+results/
+*.pdf
+*.jpg
+*.png
+
+# ---- Docker ----
+*.pid
+*.tar
+*.sock
+
+# ---- Build / Dist ----
+build/
+dist/
+*.egg-info/
+*.egg
+*.spec
+
+# ---- uv & cache ----
+.uv/
+__pypackages__/
+.cache/
+
+# ---- Notebooks ----
+*.ipynb_checkpoints
+
+# ---- Misc ----
+*.bak

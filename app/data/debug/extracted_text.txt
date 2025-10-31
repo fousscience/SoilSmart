@@ -1,0 +1,83 @@
+I Rapport Hypothétique d’Analyse de Sol
+Région : Sikasso (Mali)
+Paramètre
+Résultat
+Unité
+Méthode d’analyse
+pH (eau)
+6.4
+-
+Potentiométrie
+Matière organique
+1.8
+%
+Méthode Walkley & Black
+Carbone organique
+1.05
+%
+Méthode Walkley & Black
+Azote total (N)
+0.12
+%
+Méthode Kjeldahl
+Rapport C/N
+8.8
+-
+Calculé
+Phosphore assimilable (PIOI)
+18
+mg/kg
+Olsen
+Potassium échangeable (KIO)
+95
+mg/kg
+Flamme photométrie
+Calcium échangeable (Ca²I)
+3.6
+cmol(+)/kg
+Spectrométrie AAS
+Magnésium échangeable (Mg²I)
+1.2
+cmol(+)/kg
+Spectrométrie AAS
+Sodium échangeable (NaI)
+0.2
+cmol(+)/kg
+Spectrométrie AAS
+Capacité d’échange cationique (CEC)
+12.5
+cmol(+)/kg
+Méthode ammonium acétate
+Saturation en bases
+70
+%
+Calculée
+Texture (analyse granulométrique)
+Sable : 55% - Limon : 25% - Argile : 20%
+-
+Méthode Robinson
+Conductivité électrique (CE)
+0.15
+dS/m
+Conductimétrie
+Teneur en fer (Fe)
+45
+mg/kg
+Spectrométrie AAS
+Teneur en zinc (Zn)
+2.8
+mg/kg
+Spectrométrie AAS
+Teneur en cuivre (Cu)
+1.5
+mg/kg
+Spectrométrie AAS
+Teneur en manganèse (Mn)
+65
+mg/kg
+Spectrométrie AAS
+Humidité du sol
+12
+%
+Gravimétrique
+
