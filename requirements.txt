@@ -12,3 +12,5 @@ PyMuPDF
 langchain
 requests
 python-multipart
+weasyprint
+markdown
