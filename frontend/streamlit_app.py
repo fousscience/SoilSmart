@@ -98,8 +98,8 @@ st.markdown("</div></div>", unsafe_allow_html=True)
 
 # --- Sidebar (Desktop) ---
 with st.sidebar:
-    st.markdown("<h1 style='color: #4CAF50; font-weight: 700;'>🌱 SoilSmart-AI</h1>", unsafe_allow_html=True)
-    st.markdown("_Analyse, Interprétation et Recommandations Intelligentes_")
+    st.markdown("<h1 style='color: #4CAF50; font-weight: 700;'>🌱 Soil Smart </h1>", unsafe_allow_html=True)
+    st.markdown("_Innovation au service de vos sols et cultures_")
     st.markdown("---")
     uploaded_file = st.file_uploader(
         "#### Téléverser un résultat d'analyse (PDF)",
@@ -114,7 +114,7 @@ with st.sidebar:
         <img src="https://maliagriculture.com/gallery/logo%20n1.jpg?ts=1757619351" width="50">
         <div>
             <strong>© 2025 MaliAgriculture.com</strong><br>
-            🌱 AI solution for Agriculture.
+            🌱 Smart Solution for Agriculture.
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -123,7 +123,7 @@ with st.sidebar:
 uploaded_file = uploaded_file if uploaded_file else mobile_uploaded_file
 
 # --- Main Page ---
-st.markdown("<h1 style='text-align: center; color: #4CAF50; font-weight: 700;'>🌱 Rapport d'Analyse automatique de Sol</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center; color: #4CAF50; font-weight: 700;'>🌱 Rapport d’Analyse Agronomique et Recommandations Stratégiques</h1>", unsafe_allow_html=True)
 
 if 'report_data' not in st.session_state:
     st.session_state.report_data = None

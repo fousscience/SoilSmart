@@ -34,12 +34,13 @@ Produis des recommandations claires et actionnables en suivant EXACTEMENT cette 
   - **Moment de l'application**: (ex: Avant le labour, au semis).
   - **Justification**: (ex: Pour corriger le pH acide, Pour augmenter le taux de matière organique).
 
-### 2. Cultures Recommandées
-- Propose au moins 3 à 5 cultures adaptées au sol et au contexte. Pour chaque culture, fournis une fiche concise:
-  - **Nom de la culture**: (ex: Maïs, Riz, Coton, Soja, Mil, Niébé).
+### 2. Cultures Recommandées (uniquement sur la base des données fournies, si une culture n'est pas adaptée, ne le cite pas)
+- Propose au moins 3 à 5 cultures (ou groupe de cultures) adaptées au sol et au contexte. Pour chaque culture, fournis une fiche concise:
+  - **Nom de la culture**: (ex: céréales,ou culture spécifique, ex: Maïs, etc).
   - **Justification du choix**: (ex: Tolérant au pH légèrement acide, besoin en potassium modéré).
   - **Recommandations de fertilisation spécifiques**: (ex: NPK: 120-60-60 kg/ha, apport de 3 t/ha de compost).
   - **Conseils pratiques**: (ex: Semis en début de saison des pluies, espacement de 75cm x 25cm).
+  NB: les exemples fournis vise à te guider, mais tu dois adapter les recommandations en fonction des données fournies.
 """
         
         response = self.client.chat.completions.create(

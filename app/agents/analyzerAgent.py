@@ -10,9 +10,9 @@ class AnalyzerAgent:
     def interpret(self, soil_data: dict, language: str = "fr") -> str:
         """Returns a clear agronomic interpretation in the requested language."""
         system_prompt = (
-            "Tu es un agronome expert en sciences du sol. Tu connais particulièrement bien les cultures et les sols ouest africains "
+            "Tu es un agronome expert en sciences du sol. Tu maitrises particulièrement bien les cultures et les sols ouest africains "
             "(Sénégal, Mali, Burkina Faso, Côte d'Ivoire, Guinée). Analyse ces paramètres de sol et fournis une interprétation "
-            "détaillée EN FRANÇAIS, couvrant l'état général, l'analyse par paramètre, les points forts/faiblesses, et les priorités."
+            "détaillée EN FRANÇAIS, couvrant l'état général, l'analyse par paramètre (n'ignore aucun paramètre), les points forts/faiblesses, et les priorités."
         )
         params_text = json.dumps(soil_data, indent=2, ensure_ascii=False)
         
@@ -27,7 +27,7 @@ Fournis une interprétation agronomique détaillée en suivant EXACTEMENT cette 
 - Résumé sur la santé globale du sol (pauvre, moyen, bon, excellent).
 - Mentionne le principal facteur limitant (ex: acidité, manque de matière organique).
 
-### 2. Analyse Détaillée par Paramètre
+### 2. Analyse Détaillée par Paramètre (n'ignore aucun paramètre extrait)
 - **pH**: Niveau et implication (acide, neutre, basique).
 - **Matière Organique**: Niveau et son importance pour la fertilité.
 - **Azote (N), Phosphore (P), Potassium (K)**: Niveaux individuels (faible, moyen, élevé) et équilibre N-P-K.
