@@ -18,203 +18,135 @@ st.set_page_config(
 # --- Custom CSS for better UI ---
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
-    /* --- General Style --- */
-    html, body, [class*="css"] {
-        font-family: 'Poppins', sans-serif;
-    }
+/* --- General --- */
+html, body, [class*="css"] {
+    font-family: 'Poppins', sans-serif;
+}
+.main {
+    background-color: #F9F9F6;
+    color: #333333;
+}
 
-    .main {
-        background-color: #F9F9F6; /* beige clair */
-        color: #333333;
-    }
+/* --- Sidebar (Desktop) --- */
+[data-testid="stSidebar"] {
+    background-color: #FFFFFF;
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin: 0.5rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
 
-    /* --- Sidebar --- */
-    [data-testid="stSidebar"] {
-        background-color: #FFFFFF;
-        border-radius: 15px;
-        padding: 1.5rem;
-        margin: 0.5rem;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-    }
+/* --- Header Zone for Mobile --- */
+.mobile-header {
+    display: none;
+    text-align: center;
+    background-color: #FFFFFF;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    padding: 1rem 0.5rem;
+    margin-bottom: 1rem;
+}
 
-    [data-testid="stSidebar"] > div:first-child {
-        padding-top: 1rem;
-    }
+.mobile-header img {
+    width: 80px;
+}
+.mobile-header h1 {
+    color: #4CAF50;
+    font-size: 1.4rem;
+    margin-bottom: 0.25rem;
+}
 
-    [data-testid="stSidebar"] .stImage {
-        display: flex;
-        justify-content: center;
-        margin-bottom: 1.5rem;
-    }
-    
-    [data-testid="stSidebar"] h1 {
-        text-align: center;
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: #4CAF50; /* Vert */
-        margin-bottom: 0.5rem;
-    }
+/* --- Buttons --- */
+.stButton>button {
+    border-radius: 10px;
+    border: 2px solid #4CAF50;
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 28px;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    font-size: 1rem;
+    width: 100%;
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.2);
+}
+.stButton>button:hover {
+    background-color: #FFFFFF;
+    color: #4CAF50;
+    border-color: #4CAF50;
+    transform: translateY(-2px);
+}
 
-    [data-testid="stSidebar"] .stMarkdown p {
-        text-align: center;
-        color: #795548; /* brun doux */
-        font-size: 0.9rem;
-    }
+/* --- Cards --- */
+.report-card, .language-section {
+    background-color: #FFFFFF;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    margin-bottom: 2rem;
+}
 
-    /* --- Headers --- */
-    h1, h2, h3 {
-        color: #4CAF50;
-        font-weight: 600;
-    }
-
-    /* --- Buttons & Cards --- */
+/* --- Mobile Responsive --- */
+@media (max-width: 768px) {
+    [data-testid="stSidebar"] { display: none; } /* Cache la sidebar */
+    .mobile-header { display: block; } /* Montre l’en-tête mobile */
+    .main { padding: 0.5rem; }
     .stButton>button {
-        border-radius: 10px;
-        border: 2px solid #4CAF50;
-        background-color: #4CAF50;
-        color: white;
-        padding: 12px 28px;
-        transition: all 0.3s ease;
-        font-weight: 600;
-        font-size: 1rem;
-        width: 100%;
-        box-shadow: 0 2px 8px rgba(76, 175, 80, 0.2);
-    }
-
-    .stButton>button:hover {
-        background-color: #FFFFFF;
-        color: #4CAF50;
-        border-color: #4CAF50;
-        box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
-        transform: translateY(-2px);
-    }
-
-    /* --- Results & Containers --- */
-    .element-container {
-        margin-bottom: 1rem;
-    }
-
-    [data-testid="stExpander"] {
-        background-color: #FFFFFF;
-        border-radius: 12px;
-        padding: 0;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-        margin-bottom: 1.5rem;
-        border: 1px solid #E8E8E8;
-    }
-
-    [data-testid="stExpander"] details {
-        border-radius: 12px;
-    }
-
-    [data-testid="stExpander"] summary {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: #4CAF50;
-        padding: 1rem 1.5rem;
-        background-color: #F9F9F6;
-        border-radius: 12px;
-    }
-
-    [data-testid="stExpander"] summary:hover {
-        background-color: #F0F0ED;
-    }
-
-    [data-testid="stExpander"] > div > div {
-        padding: 1.5rem;
-    }
-
-    /* --- Info/Alert boxes --- */
-    .stAlert {
-        border-radius: 10px;
-        border-left: 4px solid #4CAF50;
-        background-color: #FFFFFF;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    }
-
-    /* --- File Uploader --- */
-    [data-testid="stFileUploader"] {
-        background-color: #F9F9F6;
-        border-radius: 10px;
-        padding: 1rem;
-        border: 2px dashed #4CAF50;
-    }
-
-    /* --- Custom Card Style --- */
-    .report-card {
-        background-color: #FFFFFF;
-        border-radius: 12px;
-        padding: 2rem;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        margin-bottom: 2rem;
-        border-left: 5px solid #4CAF50;
-    }
-
-    .report-card h3 {
-        color: #4CAF50;
-        font-weight: 600;
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .language-section {
-        background-color: #FFFFFF;
-        border-radius: 12px;
-        padding: 1.5rem;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        margin-top: 2rem;
-    }
-
-    .language-section h2 {
-        color: #795548;
-        font-weight: 600;
-        margin-bottom: 1.5rem;
-    }
-
-    /* --- Spinner --- */
-    .stSpinner > div {
-        border-top-color: #4CAF50 !important;
-    }
-    /* --- Mobile Responsiveness --- */
-     @media (max-width: 768px) {
-        [data-testid="stSidebar"] {
-        display: block !important;
-        transform: translateX(0) !important;
-        width: 250px !important;
-        position: fixed !important;
-        left: 0 !important;
-        top: 0 !important;
-        height: 100vh !important;
-        z-index: 1000 !important;
-    }
-    [data-testid="stAppViewContainer"] {
-        margin-left: 250px !important;
+        font-size: 0.9rem;
+        padding: 10px 18px;
     }
 }
+/* --- Responsive Sidebar Text & Buttons --- */
+@media (max-width: 600px) {
+    [data-testid="stSidebar"] h3 {
+        font-size: 1.2rem !important;
+    }
+    [data-testid="stSidebar"] .stMarkdown p,
+    [data-testid="stSidebar"] label {
+        font-size: 0.85rem !important;
+    }
+    [data-testid="stSidebar"] .stButton>button {
+        font-size: 0.9rem !important;
+        padding: 10px 16px !important;
+    }
+    [data-testid="stFileUploader"] {
+        padding: 0.8rem !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
+
 # --- Sidebar --- #
+# --- Sidebar améliorée --- #
 with st.sidebar:
-    st.image("https://maliagriculture.com/gallery/logo%20n1.jpg?ts=1757619351", width=150)
-    st.title("SoilSmart-AI")
-    st.markdown("__Analyse, Interprétation et Recommandations Intelligente__")
+    
+    st.markdown("<h1 style='text-align: left; color: #4CAF50; font-weight: 700; margin-bottom: 2rem;'>🌱 SoilSmart-AI</h1>", unsafe_allow_html=True)
+    st.markdown("_Analyse, Interprétation et Recommandations Intelligentes_")
     
     st.markdown("---")
-    
     uploaded_file = st.file_uploader(
-        "1. Téléversez votre rapport d'analyse", 
+        "#### Téléverser un résultat d'analyse (PDF)",
         type=["pdf"],
-        help="Le fichier PDF de votre analyse de sol."
+        help="Chargez ici le fichier PDF contenant les résultats d’analyse du sol."
     )
-    
+
+    if uploaded_file is not None:
+        st.success(f"✅ Fichier chargé : **{uploaded_file.name}**")
+
     st.markdown("---")
-    st.info("""**© 2025 MaliAgriculture.com**  
-AI solution for Agriculture""")
+    st.markdown("""
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <img src="https://maliagriculture.com/gallery/logo%20n1.jpg?ts=1757619351" width="50">
+        <div>
+            <strong>© 2025 MaliAgriculture.com</strong><br>
+            🌱 AI solution for Agriculture.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
 
 # --- Main Page --- #
 st.markdown("<h1 style='text-align: center; color: #4CAF50; font-weight: 700; margin-bottom: 2rem;'>🌱 Rapport d'Analyse automatique de Sol</h1>", unsafe_allow_html=True)
