@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y \
     libcairo2 \
     libcairo2-dev \
     pkg-config \
-    libgdk-pixbuf2.0-0 \
+    libgdk-pixbuf-2.0-0 \
     shared-mime-info \
     tesseract-ocr \
     poppler-utils \
