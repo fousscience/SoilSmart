@@ -1,12 +1,12 @@
 # frontend/streamlit_app.py
 from dotenv import load_dotenv
 import os
+import streamlit as st
+import requests
+import markdown
 
 load_dotenv()
 API_URL = os.getenv("API_URL", "http://localhost:8000")
-
-import streamlit as st
-import requests
 
 # --- Page Configuration ---
 st.set_page_config(
@@ -86,28 +86,21 @@ st.markdown("""
 <div class="mobile-header">
     <img src="https://maliagriculture.com/gallery/logo%20n1.jpg?ts=1757619351">
     <h1>🌱 SoilSmart-AI</h1>
-    <div class="mobile-uploader">
+</div>
 """, unsafe_allow_html=True)
-
-mobile_uploaded_file = st.file_uploader(
-    "Téléverser un fichier PDF",
-    type=["pdf"],
-    key="mobile_uploader"
-)
-st.markdown("</div></div>", unsafe_allow_html=True)
 
 # --- Sidebar (Desktop) ---
 with st.sidebar:
-    st.markdown("<h1 style='color: #4CAF50; font-weight: 700;'>🌱 Soil Smart </h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='color: #4CAF50; font-weight: 700;'>🌱 Soil Smart</h1>", unsafe_allow_html=True)
     st.markdown("_Innovation au service de vos sols et cultures_")
     st.markdown("---")
-    uploaded_file = st.file_uploader(
+    sidebar_uploaded_file = st.file_uploader(
         "#### Téléverser un résultat d'analyse (PDF)",
         type=["pdf"],
         key="sidebar_uploader"
     )
-    if uploaded_file is not None:
-        st.success(f"✅ Fichier chargé : **{uploaded_file.name}**")
+    if sidebar_uploaded_file is not None:
+        st.success(f"✅ Fichier chargé : **{sidebar_uploaded_file.name}**")
     st.markdown("---")
     st.markdown("""
     <div style="display: flex; align-items: center; gap: 10px;">
@@ -119,12 +112,10 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
 
-# --- Determine which file to use ---
-uploaded_file = uploaded_file if uploaded_file else mobile_uploaded_file
-
 # --- Main Page ---
 st.markdown("<h1 style='text-align: center; color: #4CAF50; font-weight: 700;'>🌱 Rapport d’Analyse Agronomique et Recommandations Stratégiques</h1>", unsafe_allow_html=True)
 
+# --- Session state ---
 if 'report_data' not in st.session_state:
     st.session_state.report_data = None
 if 'show_summaries' not in st.session_state:
@@ -135,6 +126,33 @@ if 'current_file_id' not in st.session_state:
 def reset_report_state():
     st.session_state.report_data = None
     st.session_state.show_summaries = {'wo': False, 'bm': False}
+
+# --- Show uploader if no report exists ---
+if not st.session_state.report_data or st.session_state.report_data.get("error"):
+    st.markdown("""
+    <div style="background-color: #FFFFFF; border-radius: 12px; padding: 3rem 3rem 2rem 3rem; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-top: 2rem;">
+        <h3 style="color: #795548; margin-bottom: 1rem;">📄 Commencez votre analyse</h3>
+        <p style="color: #666; font-size: 1.1rem; margin-bottom: 2rem;">Veuillez téléverser un fichier PDF pour commencer l'analyse de votre sol.</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    body_uploaded_file = st.file_uploader(
+        "Téléverser un fichier PDF",
+        type=["pdf"],
+        key="body_uploader",
+        label_visibility="collapsed"
+    )
+else:
+    body_uploaded_file = None
+
+# --- Upload handling ---
+# Determine which file to use (sidebar takes priority if both exist)
+if sidebar_uploaded_file:
+    uploaded_file = sidebar_uploaded_file
+elif body_uploaded_file:
+    uploaded_file = body_uploaded_file
+else:
+    uploaded_file = None
 
 if uploaded_file:
     file_bytes = uploaded_file.getvalue()
@@ -156,16 +174,20 @@ if uploaded_file:
                 st.error(f"Erreur de connexion à l'API: {e}")
                 st.session_state.report_data = {"error": True}
 else:
-    if st.session_state.report_data is not None or st.session_state.current_file_id is not None:
+    # No file uploaded, reset state if needed
+    if st.session_state.current_file_id is not None and not st.session_state.report_data:
         reset_report_state()
         st.session_state.current_file_id = None
 
-# --- Display report ---
+# --- Display report and download PDF ---
 if st.session_state.report_data and not st.session_state.report_data.get("error"):
     data = st.session_state.report_data
-    st.markdown(data["report"], unsafe_allow_html=True)
+    report_html = data["report"]
 
+    st.markdown(report_html, unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
+
+    # Résumés dans d'autres langues
     st.markdown('<div class="language-section"><h2>🌐 Résumés dans d\'autres langues</h2></div>', unsafe_allow_html=True)
     
     col1, col2 = st.columns(2)
@@ -182,10 +204,133 @@ if st.session_state.report_data and not st.session_state.report_data.get("error"
     if st.session_state.show_summaries['bm']:
         with st.expander("📖 Résumé en Bambara", expanded=True):
             st.markdown(data.get("summary_bm", "Résumé non disponible."))
-else:
-    st.markdown("""
-    <div style="background-color: #FFFFFF; border-radius: 12px; padding: 3rem; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-top: 2rem;">
-        <h3 style="color: #795548; margin-bottom: 1rem;">📄 Commencez votre analyse</h3>
-        <p style="color: #666; font-size: 1.1rem;">Veuillez téléverser un fichier PDF pour commencer l'analyse de votre sol.</p>
-    </div>
-    """, unsafe_allow_html=True)
+
+    # --- Bouton téléchargement PDF ---
+    try:
+        from weasyprint import HTML
+        
+        # Convert Markdown to HTML (the report is in Markdown format)
+        md = markdown.Markdown(extensions=['tables', 'fenced_code', 'nl2br'])
+        report_html_converted = md.convert(report_html)
+        
+        # Wrap converted HTML in a complete HTML document with proper CSS
+        # Use system fonts instead of @import for better WeasyPrint compatibility
+        pdf_html = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <style>
+                @page {{
+                    margin: 2cm;
+                    size: A4;
+                }}
+                body {{
+                    font-family: 'DejaVu Sans', 'Arial', 'Helvetica', sans-serif;
+                    color: #333333;
+                    line-height: 1.8;
+                    padding: 10px;
+                    font-size: 11pt;
+                }}
+                h1 {{
+                    color: #4CAF50;
+                    font-size: 22pt;
+                    font-weight: bold;
+                    margin-top: 1.5em;
+                    margin-bottom: 0.8em;
+                    page-break-after: avoid;
+                }}
+                h2 {{
+                    color: #4CAF50;
+                    font-size: 18pt;
+                    font-weight: bold;
+                    margin-top: 1.3em;
+                    margin-bottom: 0.6em;
+                    page-break-after: avoid;
+                }}
+                h3 {{
+                    color: #4CAF50;
+                    font-size: 14pt;
+                    font-weight: bold;
+                    margin-top: 1.1em;
+                    margin-bottom: 0.5em;
+                    page-break-after: avoid;
+                }}
+                h4 {{
+                    color: #666;
+                    font-size: 12pt;
+                    font-weight: bold;
+                    margin-top: 1em;
+                    margin-bottom: 0.4em;
+                }}
+                p {{
+                    margin-bottom: 1em;
+                    text-align: justify;
+                }}
+                ul, ol {{
+                    margin-left: 2em;
+                    margin-bottom: 1em;
+                }}
+                li {{
+                    margin-bottom: 0.5em;
+                }}
+                table {{
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin: 1.5em 0;
+                    page-break-inside: avoid;
+                }}
+                th, td {{
+                    border: 1px solid #ddd;
+                    padding: 10px;
+                    text-align: left;
+                    font-size: 10pt;
+                }}
+                th {{
+                    background-color: #4CAF50;
+                    color: white;
+                    font-weight: bold;
+                }}
+                tr:nth-child(even) {{
+                    background-color: #f9f9f9;
+                }}
+                .report-card {{
+                    background-color: #f5f5f5;
+                    padding: 1.5em;
+                    margin-bottom: 1.5em;
+                    border-left: 4px solid #4CAF50;
+                }}
+                strong {{
+                    font-weight: bold;
+                    color: #000;
+                }}
+                em {{
+                    font-style: italic;
+                }}
+                code {{
+                    background-color: #f4f4f4;
+                    padding: 2px 5px;
+                    font-family: 'Courier New', monospace;
+                    font-size: 10pt;
+                }}
+                .page-break {{
+                    page-break-before: always;
+                }}
+            </style>
+        </head>
+        <body>
+            {report_html_converted}
+        </body>
+        </html>
+        """
+        
+        pdf_bytes = HTML(string=pdf_html).write_pdf()
+        st.download_button(
+            label="⬇️ Télécharger le rapport en PDF",
+            data=pdf_bytes,
+            file_name="rapport_soilsmart.pdf",
+            mime="application/pdf"
+        )
+    except (ImportError, OSError) as e:
+        st.info("💡 Le téléchargement PDF n'est pas disponible sur ce système. Vous pouvez utiliser la fonction d'impression de votre navigateur pour sauvegarder le rapport.")
+        # Uncomment to see detailed error: st.error(f"Erreur: {e}")
