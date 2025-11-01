@@ -3,9 +3,12 @@ FROM python:3.11-slim
 WORKDIR /soilsmart
 # Install system dependencies for WeasyPrint, Tesseract, and Poppler
 RUN apt-get update && apt-get install -y \
+    build-essential \
     libpango-1.0-0 \
     libpangoft2-1.0-0 \
     libcairo2 \
+    libcairo2-dev \
+    pkg-config \
     libgdk-pixbuf2.0-0 \
     shared-mime-info \
     tesseract-ocr \
@@ -14,9 +17,6 @@ RUN apt-get update && apt-get install -y \
     
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-
-# OCR dependencies
-RUN apt-get update && apt-get install -y tesseract-ocr poppler-utils
 
 COPY . .
 
