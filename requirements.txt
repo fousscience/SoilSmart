@@ -12,3 +12,5 @@ PyMuPDF
 langchain
 requests
 python-multipart
+xhtml2pdf
+markdown
