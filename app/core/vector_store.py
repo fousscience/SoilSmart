@@ -1,12 +1,12 @@
 import chromadb
-from openai import OpenAI
+from app.agents.baseAgent import get_openai_client
 from app.core.config import settings
 
 class VectorStore:
     def __init__(self):
         self.client = chromadb.PersistentClient(path=settings.CHROMA_PATH)
         self.collection = self.client.get_or_create_collection("agro_docs")
-        self.openai_client = OpenAI(api_key=settings.OPENAI_API_KEY)
+        self.openai_client = get_openai_client()  # Reuse shared client
 
     def add_document(self, text: str, metadata: dict):
         emb = self.openai_client.embeddings.create(

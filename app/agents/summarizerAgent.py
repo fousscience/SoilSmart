@@ -1,10 +1,10 @@
 # app/agents/summarizerAgent.py
-from openai import OpenAI
+from app.agents.baseAgent import get_openai_client
 from app.core.config import settings
 
 class SummarizerAgent:
     def __init__(self):
-        self.client = OpenAI(api_key=settings.OPENAI_API_KEY)
+        self.client = get_openai_client()  # Reuse shared client
 
     def summarize(self, text_to_summarize: str, target_language: str) -> str:
         """Summarizes the given text into the target language (Wolof or Bambara) using OpenAI."""

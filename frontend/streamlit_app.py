@@ -10,6 +10,7 @@ import requests
 from datetime import datetime
 from io import BytesIO
 import markdown
+import re
 
 # Try to import xhtml2pdf for PDF generation, fallback to HTML if not available
 try:
@@ -167,12 +168,22 @@ if uploaded_file:
         with st.spinner("Analyse complète en cours (FR, WO, BM)..."):
             files = {"file": (uploaded_file.name, file_bytes, "application/pdf")}
             try:
-                response = requests.post(f"{API_URL}/analyze", files=files, timeout=240)
+                # Use stream=True for large files to improve memory efficiency
+                response = requests.post(
+                    f"{API_URL}/analyze", 
+                    files=files, 
+                    timeout=240,
+                    stream=False  # Keep False for small PDFs, set True if files are large
+                )
+                response.raise_for_status()  # Raise exception for HTTP errors
                 if response.status_code == 200:
                     st.session_state.report_data = response.json()
                 else:
                     st.error(f"Erreur de l'API: {response.text}")
                     st.session_state.report_data = {"error": True}
+            except requests.exceptions.Timeout:
+                st.error("⏱️ La requête a pris trop de temps. Veuillez réessayer avec un fichier plus petit.")
+                st.session_state.report_data = {"error": True}
             except requests.exceptions.RequestException as e:
                 st.error(f"Erreur de connexion à l'API: {e}")
                 st.session_state.report_data = {"error": True}
@@ -209,9 +220,6 @@ if st.session_state.report_data and not st.session_state.report_data.get("error"
     def format_report_for_pdf(data):
         """Format the report as a well-structured HTML document for PDF conversion"""
         current_date = datetime.now().strftime("%d/%m/%Y à %H:%M")
-        
-        # Convert Markdown to HTML with table support and merge units with values
-        import re
         
         # Pre-process to merge units with values in tables
         report_text = data["report"]
@@ -511,8 +519,6 @@ if st.session_state.report_data and not st.session_state.report_data.get("error"
             return None
     
     # Download button at the end
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown("---", unsafe_allow_html=True)
     
     try:
         col_download = st.columns([1, 2, 1])

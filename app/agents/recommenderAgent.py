@@ -1,11 +1,11 @@
 # app/agents/recommenderAgent.py
-from openai import OpenAI
+from app.agents.baseAgent import get_openai_client
 from app.core.vector_store import VectorStore
 from app.core.config import settings
 
 class RecommenderAgent:
     def __init__(self):
-        self.client = OpenAI(api_key=settings.OPENAI_API_KEY)
+        self.client = get_openai_client()  # Reuse shared client
         self.vstore = VectorStore()
 
     def recommend(self, soil_data: str, analysis: str, language: str = "fr"):

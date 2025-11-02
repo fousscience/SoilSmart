@@ -40,6 +40,8 @@ app/*.pyc
 data/chroma_db/
 chroma_storage/
 *.chroma/
+app/data/
+app/data/debug/
 
 # ---- OCR outputs ----
 temp/

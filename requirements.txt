@@ -1,5 +1,5 @@
 fastapi
-uvicorn
+uvicorn[standard]
 streamlit
 chromadb
 openai
@@ -14,3 +14,5 @@ requests
 python-multipart
 xhtml2pdf
 markdown
+redis
+hiredis

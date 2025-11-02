@@ -1,11 +1,11 @@
 # app/agents/analyzerAgent.py
-from openai import OpenAI
+from app.agents.baseAgent import get_openai_client
 from app.core.config import settings
 import json
 
 class AnalyzerAgent:
     def __init__(self):
-        self.client = OpenAI(api_key=settings.OPENAI_API_KEY)
+        self.client = get_openai_client()  # Reuse shared client
 
     def interpret(self, soil_data: dict, language: str = "fr") -> str:
         """Returns a clear agronomic interpretation in the requested language."""
