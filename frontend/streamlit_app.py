@@ -22,7 +22,7 @@ except ImportError:
 
 # --- Page Configuration ---
 st.set_page_config(
-    page_title="SoilSmart par MaliAgriculture",
+    page_title="SoilSense par MaliAgriculture",
     page_icon="🌱",
     layout="wide"
 )
@@ -104,13 +104,13 @@ html, body, [class*="css"] { font-family: 'Poppins', sans-serif; }
 st.markdown("""
 <div class="mobile-header">
     <img src="https://maliagriculture.com/gallery/logo%20n1.jpg?ts=1757619351">
-    <h1>🌱 SoilSmart-AI</h1>
+    <h1>🌱 SoilSense</h1>
 </div>
 """, unsafe_allow_html=True)
 
 # --- Sidebar (Desktop) ---
 with st.sidebar:
-    st.markdown("<h1 style='color: #4CAF50; font-weight: 700;'>🌱 Soil Smart </h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='color: #4CAF50; font-weight: 700;'>🌱 SoilSense</h1>", unsafe_allow_html=True)
     st.markdown("_Innovation au service de vos sols et cultures_")
     st.markdown("---")
     uploaded_file = st.file_uploader(
@@ -339,7 +339,7 @@ if st.session_state.report_data and not st.session_state.report_data.get("error"
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Rapport d'Analyse Agronomique - SoilSmart</title>
+    <title>Rapport d'Analyse Agronomique - SoilSense</title>
     <style>
         @page {{
             size: A4;
@@ -483,7 +483,7 @@ if st.session_state.report_data and not st.session_state.report_data.get("error"
 <body>
     <div class="header">
         <h1>🌱 Rapport d'Analyse Agronomique et Recommandations Stratégiques</h1>
-        <p>SoilSmart par MaliAgriculture</p>
+        <p>SoilSense par MaliAgriculture</p>
     </div>
     
     <div class="content">

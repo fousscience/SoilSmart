@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 from app.agents.orchestrator_agent import OrchestratorAgent
 from app.core.cache import cache
 
-app = FastAPI(title="SoilSmart API")
+app = FastAPI(title="SoilSense API")
 
 # Reuse orchestrator instance to avoid recreating agents on every request
 _orchestrator = None
