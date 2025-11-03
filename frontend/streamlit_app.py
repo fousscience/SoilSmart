@@ -157,14 +157,24 @@ if 'current_file_id' not in st.session_state:
 def reset_report_state():
     st.session_state.report_data = None
     st.session_state.show_summaries = {'wo': False, 'bm': False}
+    st.session_state.current_file_id = None
 
+# Only reset if user explicitly removes the file (not on button clicks)
+# We check if there's a new file or if the file was removed intentionally
 if uploaded_file:
     file_bytes = uploaded_file.getvalue()
     file_id = f"{uploaded_file.name}-{len(file_bytes)}"
-    if st.session_state.current_file_id != file_id:
+    
+    # Only reset if it's a different file
+    if st.session_state.current_file_id is not None and st.session_state.current_file_id != file_id:
         reset_report_state()
         st.session_state.current_file_id = file_id
-    if st.session_state.report_data is None:
+    
+    # If no report exists yet, or if it's a new file, process it
+    if st.session_state.report_data is None or st.session_state.current_file_id != file_id:
+        if st.session_state.current_file_id != file_id:
+            st.session_state.current_file_id = file_id
+        
         with st.spinner("Analyse complète en cours (FR, WO, BM)..."):
             files = {"file": (uploaded_file.name, file_bytes, "application/pdf")}
             try:
@@ -187,10 +197,23 @@ if uploaded_file:
             except requests.exceptions.RequestException as e:
                 st.error(f"Erreur de connexion à l'API: {e}")
                 st.session_state.report_data = {"error": True}
-else:
-    if st.session_state.report_data is not None or st.session_state.current_file_id is not None:
-        reset_report_state()
-        st.session_state.current_file_id = None
+elif st.session_state.current_file_id is not None:
+    # Don't reset on button clicks - only reset if file was truly removed
+    # On mobile, button clicks cause reruns where uploaded_file might be temporarily None
+    # But we should preserve the report data if it exists
+    # Only reset if we're sure the user cleared the file AND we don't have active summaries
+    if st.session_state.report_data is not None:
+        # If we have report data, keep it - don't reset just because uploaded_file is None
+        # This handles mobile reruns after button clicks
+        pass
+    else:
+        # Only reset if no report data and file was cleared
+        sidebar_file = st.session_state.get("sidebar_uploader")
+        main_file = st.session_state.get("main_uploader")
+        
+        if sidebar_file is None and main_file is None:
+            # User actually cleared the file - reset everything
+            reset_report_state()
 
 # --- Display report ---
 if st.session_state.report_data and not st.session_state.report_data.get("error"):
@@ -202,12 +225,17 @@ if st.session_state.report_data and not st.session_state.report_data.get("error"
     
     col1, col2 = st.columns(2)
     with col1:
-        if st.button("🇸🇳 Afficher le résumé en Wolof"):
+        # Use unique key to prevent rerun issues on mobile
+        if st.button("🇸🇳 Afficher le résumé en Wolof", key="toggle_wo"):
             st.session_state.show_summaries['wo'] = not st.session_state.show_summaries['wo']
+            st.rerun()
     with col2:
-        if st.button("🇲🇱 Afficher le résumé en Bambara"):
+        # Use unique key to prevent rerun issues on mobile
+        if st.button("🇲🇱 Afficher le résumé en Bambara", key="toggle_bm"):
             st.session_state.show_summaries['bm'] = not st.session_state.show_summaries['bm']
+            st.rerun()
 
+    # Always show the expanders if enabled, even if collapsed initially
     if st.session_state.show_summaries['wo']:
         with st.expander("📖 Résumé en Wolof", expanded=True):
             st.markdown(data.get("summary_wo", "Résumé non disponible."))
@@ -318,10 +346,17 @@ if st.session_state.report_data and not st.session_state.report_data.get("error"
             margin: 2cm;
         }}
         body {{
-            font-family: Helvetica, Arial, sans-serif;
+            font-family: "DejaVu Sans", "Liberation Sans", "Arial Unicode MS", "Arial", "Helvetica", sans-serif;
             line-height: 1.8;
             color: #333333;
             font-size: 11pt;
+            /* Ensure proper Unicode rendering */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }}
+        /* Specific styling for summaries with Unicode characters */
+        .summary-section {{
+            font-family: "DejaVu Sans", "Liberation Sans", "Arial Unicode MS", "Arial", sans-serif;
         }}
         .header {{
             background-color: #4CAF50;
@@ -467,21 +502,33 @@ if st.session_state.report_data and not st.session_state.report_data.get("error"
                     data.get("summary_wo", ""), 
                     extensions=['nl2br']
                 )
+                # Ensure proper HTML encoding for Unicode characters
                 html_content += f"""
         <div class="summary-section">
             <h3>🇸🇳 Résumé en Wolof</h3>
-            {summary_wo_html}
+            <div style="font-family: 'DejaVu Sans', 'Liberation Sans', 'Arial Unicode MS', Arial, sans-serif;">
+                {summary_wo_html}
+            </div>
         </div>
 """
             if data.get("summary_bm"):
+                summary_bm_text = data.get("summary_bm", "")
+                # Ensure proper encoding before markdown conversion
+                # Replace any problematic characters and ensure UTF-8 encoding
+                if isinstance(summary_bm_text, bytes):
+                    summary_bm_text = summary_bm_text.decode('utf-8', errors='ignore')
                 summary_bm_html = markdown.markdown(
-                    data.get("summary_bm", ""), 
+                    summary_bm_text, 
                     extensions=['nl2br']
                 )
+                # Ensure proper HTML encoding for Unicode characters and better font support
+                # Note: xhtml2pdf has limited Unicode support, but we try our best
                 html_content += f"""
         <div class="summary-section">
             <h3>🇲🇱 Résumé en Bambara</h3>
-            {summary_bm_html}
+            <div style="font-family: 'DejaVu Sans', 'Liberation Sans', 'Arial Unicode MS', Arial, sans-serif; font-size: 11pt; line-height: 1.6;">
+                {summary_bm_html}
+            </div>
         </div>
 """
             html_content += """
@@ -505,10 +552,12 @@ if st.session_state.report_data and not st.session_state.report_data.get("error"
         try:
             html_string = format_report_for_pdf(data)
             pdf_bytes = BytesIO()
+            # Use UTF-8 encoding explicitly for proper Unicode support
             result = pisa.CreatePDF(
                 src=BytesIO(html_string.encode('utf-8')),
                 dest=pdf_bytes,
-                encoding='utf-8'
+                encoding='utf-8',
+                link_callback=None
             )
             if result.err:
                 raise Exception(f"Erreur lors de la création du PDF: {result.err}")
