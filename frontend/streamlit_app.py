@@ -12,6 +12,101 @@ from io import BytesIO
 import markdown
 import re
 
+TOPOGRAPHY_GUIDE = {
+    "Plateau ferrugineux": {
+        "description": "Plateau légèrement ondulé sur cuirasse latéritique avec faible profondeur utile et ruissellement rapide.",
+        "travail_sol": [
+            "Tracer les opérations mécaniques sur courbes de niveau pour réduire l'érosion.",
+            "Installer cordons pierreux, mulch permanent et bandes enherbées pour ralentir le ruissellement."
+        ],
+        "fertilisation": [
+            "Apporter 3 à 5 t/ha de compost ou fumier bien décomposé incorporé avant les pluies.",
+            "Fractionner les microdoses minérales (NPK ou urée) pour limiter les pertes par lessivage."
+        ],
+        "cultures": [
+            "Privilégier les céréales résistantes à la sécheresse (mil, sorgho) et les légumineuses tolérantes (arachide, niébé).",
+            "Associer engrais verts ou cultures de couverture pour améliorer la matière organique."
+        ],
+    },
+    "Glacis": {
+        "description": "Bas de versant à pente faible avec ruissellement concentré et risque de battance des sols.",
+        "travail_sol": [
+            "Limiter le travail profond et maintenir un couvert végétal permanent.",
+            "Installer diguettes et rigoles de dissipation pour guider l'eau sans érosion."
+        ],
+        "fertilisation": [
+            "Fractionner les apports minéraux (NPK, urée) et combiner avec fumier/compost pour stabiliser la structure.",
+            "Appliquer les amendements juste avant les pluies modérées pour optimiser l'incorporation."
+        ],
+        "cultures": [
+            "Valoriser les céréales exigeantes (maïs) et tubercules (manioc court cycle) sur billons drainés.",
+            "Introduire maraîchage de saison sèche en planches paillées pour limiter la battance."
+        ],
+    },
+    "Bas-fond hydromorphe": {
+        "description": "Dépression mal drainée avec engorgements fréquents mais forte réserve en éléments fertilisants.",
+        "travail_sol": [
+            "Limiter le labour mécanique ; privilégier planches surélevées ou casiers pour contrôler l'eau.",
+            "Entretenir des fossés ou drains légers pour évacuer l'excès d'eau après les pluies."
+        ],
+        "fertilisation": [
+            "Apporter compost mûr ou fumier bien décomposé avant la mise en eau.",
+            "Limiter les apports azotés minéraux et préférer des apports fractionnés pour éviter les pertes."
+        ],
+        "cultures": [
+            "Installer céréales de bas-fond (riz), tubercules tolérants (taro, patate douce) ou maraîchage adapté.",
+            "Introduire des fourragères ou légumineuses de couverture pour améliorer l'aération du sol."
+        ],
+    },
+    "Versant moyen": {
+        "description": "Milieu de versant avec pente moyenne, sols superficiels et fort risque de ravinement.",
+        "travail_sol": [
+            "Tracer les billons, demi-lunes ou zaï sur contour pour retenir l'eau et les fines.",
+            "Maintenir un paillage épais et des ouvrages anti-érosion en série."
+        ],
+        "fertilisation": [
+            "Localiser compost ou fumier dans les demi-lunes/poquets pour maximiser l'efficacité.",
+            "Apporter des microdoses d'engrais minéraux juste après les pluies pour réduire le lessivage."
+        ],
+        "cultures": [
+            "Associer céréales (mil, sorgho) et légumineuses (niébé, arachide) en bandes alternées.",
+            "Introduire des cultures de couverture pérennes ou des engrais verts pour stabiliser les talus."
+        ],
+    },
+    "Pied de versant / bas de pente": {
+        "description": "Zone d'accumulation à drainage modéré où l'eau peut stagner ponctuellement.",
+        "travail_sol": [
+            "Travailler légèrement en gardant des cordons anti-érosion et canaux d'évacuation.",
+            "Surveiller la circulation de l'eau pour éviter les engorgements prolongés."
+        ],
+        "fertilisation": [
+            "Valoriser les dépôts organiques naturels et compléter par 2 à 3 t/ha de compost.",
+            "Adapter les apports minéraux en fonction du rapport principal pour éviter les excès."
+        ],
+        "cultures": [
+            "Installer céréales (maïs), légumineuses (niébé) et tubercules (manioc) sur planches légèrement surélevées.",
+            "Introduire maraîchage en saison sèche avec gestion du drainage."
+        ],
+    },
+    "Cuvette ou dépression": {
+        "description": "Dépression fermée avec stagnation d'eau et sols argileux lourds.",
+        "travail_sol": [
+            "Aménager des planches surélevées ou casiers drainants pour protéger les racines.",
+            "Prévoir des canaux de dérivation pour gérer les excès d'eau pendant les pluies."
+        ],
+        "fertilisation": [
+            "Limiter l'azote minéral et privilégier compost mûr, cendres ou chaux douce pour améliorer l'aération.",
+            "Adapter les doses à partir des besoins identifiés dans le rapport principal."
+        ],
+        "cultures": [
+            "Favoriser les céréales irriguées (riz), les cucurbitacées tolérantes (courge) ou fourragères rustiques.",
+            "Alterner avec des cultures de couverture pour assainir la zone."
+        ],
+    },
+}
+
+DEFAULT_TOPOGRAPHY_CHOICE = "Sélectionnez une topographie..."
+
 # Try to import xhtml2pdf for PDF generation, fallback to HTML if not available
 try:
     from xhtml2pdf import pisa
@@ -133,6 +228,51 @@ with st.sidebar:
 
 # --- Main Page ---
 st.markdown("<h1 style='text-align: center; color: #4CAF50; font-weight: 700;'>🌱 Rapport d'Analyse Agronomique et Recommandations Stratégiques</h1>", unsafe_allow_html=True)
+
+with st.container():
+    st.markdown("<h2 style='color:#4CAF50;'>Conseils topographiques rapides</h2>", unsafe_allow_html=True)
+    st.markdown(
+        "Sélectionnez le contexte topographique observé pour afficher des conseils immédiats sur le travail du sol, "
+        "les précautions de fertilisation et les cultures adaptées. Pour les doses d'amendements et la fertilité détaillée, "
+        "reportez-vous au rapport principal généré après analyse du PDF."
+    )
+
+    topography_choice = st.selectbox(
+        "Topographie dominante observée",
+        [DEFAULT_TOPOGRAPHY_CHOICE, *TOPOGRAPHY_GUIDE.keys()],
+        key="topography_guidance_choice",
+    )
+
+    if topography_choice != DEFAULT_TOPOGRAPHY_CHOICE:
+        profile = TOPOGRAPHY_GUIDE[topography_choice]
+        st.markdown(
+            f"""
+            <div style="background-color:#F5F9F3;border-left:4px solid #4CAF50;padding:1rem 1.2rem;margin:1rem 0;border-radius:8px;">
+                <strong>📍 Description :</strong> {profile['description']}
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+        st.markdown("**Conseils agronomiques prioritaires**")
+        col_work, col_fert, col_crop = st.columns(3)
+        with col_work:
+            st.markdown("**Travail du sol**")
+            for tip in profile["travail_sol"]:
+                st.markdown(f"- {tip}")
+        with col_fert:
+            st.markdown("**Précautions fertilisation**")
+            for tip in profile["fertilisation"]:
+                st.markdown(f"- {tip}")
+        with col_crop:
+            st.markdown("**Cultures adaptées**")
+            for tip in profile["cultures"]:
+                st.markdown(f"- {tip}")
+
+        st.info(
+            "Pour ajuster les doses d'amendements, les besoins nutritifs et les recommandations détaillées, "
+            "analysez votre rapport de sol : téléversez le PDF ci-dessous pour générer le rapport complet."
+        )
 
 # --- Main uploader below title (only show if no report is displayed) ---
 main_uploaded_file = None
